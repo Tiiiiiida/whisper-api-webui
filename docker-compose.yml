@@ -8,6 +8,6 @@ services:
       - "5000:5000"
     environment:
       - OPENAI_API_KEY=sk_xxxxxxxxxxxxxx
-      - API_BASE_URL=https://api.openai.com  # /v1/audio/transcriptions is not need to type here
+      - API_BASE_URL=https://api.openai.com  # /v1/audio/transcriptions does not need to be entered here
       - SECRET_KEY=xxxxxxxxxxxxxxxxxxxxx
       - ACCESS_PASSWORD_HASH=xxxxxxxxxxxxxxxxxxxxxxxx
