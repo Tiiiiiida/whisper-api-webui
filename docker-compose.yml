@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  whisper-api-webui:
+    build: .
+    container_name: whisper-api-webui
+    ports:
+      - "5000:5000"
+    environment:
+      - OPENAI_API_KEY=sk_xxxxxxxxxxxxxx
+      - API_BASE_URL=https://api.openai.com
+      - SECRET_KEY=xxxxxxxxxxxxxxxxxxxxx
+      - ACCESS_PASSWORD_HASH=xxxxxxxxxxxxxxxxxxxxxxxx
+    restart: always

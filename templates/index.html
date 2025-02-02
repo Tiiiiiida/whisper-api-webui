@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+{% block title %}Whisper WebUI{% endblock %}
+{% block content %}
+<style>
+  :root {
+    --primary: #6366f1;
+    --primary-hover: #4338ca;
+    --background: #f4f7fc;
+    --surface: #fff;
+    --text: #1e293b;
+    --radius: 12px;
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    --transition: all 0.2s ease;
+  }
+
+  .section-block {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .section-title {
+    color: var(--primary);
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .copy-button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+
+  .copy-button:hover {
+    background: var(--primary-hover);
+  }
+
+  .copy-button:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+  }
+
+  .progress-text {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 200px;
+    padding: 0.75rem;
+    background: var(--background);
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: vertical;
+    cursor: default;
+  }
+
+  .file-upload-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+
+  .file-upload-button {
+    background: var(--background);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    border: 2px dashed #e2e8f0;
+    text-align: center;
+    transition: var(--transition);
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .file-upload-wrapper:hover .file-upload-button {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .drag-over {
+    border-color: var(--primary) !important;
+    background-color: rgba(99, 102, 241, 0.1) !important;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: var(--transition);
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+  }
+
+  .btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .btn:hover {
+    background: var(--primary-hover);
+  }
+
+  .btn:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+  }
+
+  #transcript {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 200px;
+    padding: 0.75rem;
+    background: var(--background);
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    resize: vertical;
+    transition: var(--transition);
+    outline: none;
+  }
+
+  #transcript:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+  }
+
+  #transcript::placeholder {
+    color: #94a3b8;
+  }
+
+  .progress-text::-webkit-scrollbar,
+  #transcript::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .progress-text::-webkit-scrollbar-track,
+  #transcript::-webkit-scrollbar-track {
+    background: var(--background);
+    border-radius: 4px;
+  }
+
+  .progress-text::-webkit-scrollbar-thumb,
+  #transcript::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+
+  .progress-text::-webkit-scrollbar-thumb:hover,
+  #transcript::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+</style>
+
+<div class="section-block">
+  <div class="section-header">
+    <h3 class="section-title">Upload Audio</h3>
+  </div>
+  <form id="upload-form">
+    <div class="file-upload-wrapper" id="drop-zone">
+      <div class="file-upload-button">
+        <span id="file-name">Choose audio file or drag here</span>
+      </div>
+      <input type="file" name="audio_file" id="audio_file" 
+             accept=".mp3,.mp4,.mpeg,.mpga,.m4a,.wav,.webm,.flac" required
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+    </div>
+    <div class="form-group">
+      <select name="model" class="form-control" required>
+        {% for model in models %}
+          <option value="{{ model }}">{{ model }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn" style="width:100%;" id="submit-btn">Upload and Transcribe</button>
+  </form>
+</div>
+
+<div class="section-block">
+  <div class="section-header">
+    <h3 class="section-title">Progress</h3>
+  </div>
+  <textarea class="progress-text" id="progress-log" readonly>Waiting for task...</textarea>
+</div>
+
+<div class="section-block">
+  <div class="section-header">
+    <h3 class="section-title">Result</h3>
+    <button class="copy-button" id="copyButton" onclick="copyTranscript()" disabled>Copy Result</button>
+  </div>
+  <textarea id="transcript" readonly placeholder="No transcription result yet..."></textarea>
+</div>
+
+<script>
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('audio_file');
+const uploadButtonLabel = document.getElementById('file-name');
+const submitButton = document.getElementById('submit-btn');
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, e => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, false);
+});
+
+['dragenter', 'dragover'].forEach(eventName => {
+  dropZone.addEventListener(eventName, () => {
+    dropZone.querySelector('.file-upload-button').classList.add('drag-over');
+  }, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, () => {
+    dropZone.querySelector('.file-upload-button').classList.remove('drag-over');
+  }, false);
+});
+
+dropZone.addEventListener('drop', e => {
+  const files = e.dataTransfer.files;
+  if (files.length) {
+    fileInput.files = files;
+    uploadButtonLabel.textContent = files[0].name;
+  }
+});
+
+fileInput.addEventListener('change', e => {
+  const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose audio file or drag here';
+  uploadButtonLabel.textContent = fileName;
+});
+
+function copyTranscript() {
+  const copyButton = document.getElementById('copyButton');
+  const transcriptArea = document.getElementById('transcript');
+  transcriptArea.select();
+  try {
+    document.execCommand('copy');
+    copyButton.textContent = 'Copied!';
+    setTimeout(() => {
+      copyButton.textContent = 'Copy Result';
+    }, 2000);
+  } catch (err) {
+    console.error('Failed to copy: ', err);
+    copyButton.textContent = 'Copy Failed';
+    setTimeout(() => {
+      copyButton.textContent = 'Copy Result';
+    }, 2000);
+  }
+}
+
+document.getElementById('upload-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  submitButton.disabled = true;
+  const progressLog = document.getElementById('progress-log');
+  const transcriptArea = document.getElementById('transcript');
+  const copyButton = document.getElementById('copyButton');
+  
+  progressLog.value = '';
+  transcriptArea.value = '';
+  copyButton.disabled = true;
+  
+  try {
+    const formData = new FormData(this);
+    const response = await fetch('{{ url_for("upload") }}', {
+      method: 'POST',
+      body: formData
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      
+      buffer += decoder.decode(value, {stream: true});
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (line === "RESULT_BEGIN") {
+          transcriptArea.value = '';
+          copyButton.disabled = false;
+        } else if (line.startsWith("INFO:") || line.startsWith("ERROR:")) {
+          progressLog.value += line + '\n';
+          progressLog.scrollTop = progressLog.scrollHeight;
+        } else if (copyButton.disabled === false) {
+          transcriptArea.value += line + '\n';
+          transcriptArea.scrollTop = transcriptArea.scrollHeight;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Upload failed:', err);
+    progressLog.value += "ERROR: " + err + "\n";
+  } finally {
+    submitButton.disabled = false;
+  }
+});
+</script>
+{% endblock %}
