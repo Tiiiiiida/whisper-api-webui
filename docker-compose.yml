@@ -1,13 +1,13 @@
 version: '3.9'
 services:
   whisper-api-webui:
-    build: .
+    image: ghcr.io/yuzukumo/whisper-api-webui:latest
     container_name: whisper-api-webui
+    restart: always
     ports:
       - "5000:5000"
     environment:
       - OPENAI_API_KEY=sk_xxxxxxxxxxxxxx
-      - API_BASE_URL=https://api.openai.com
+      - API_BASE_URL=https://api.openai.com  # /v1/audio/transcriptions is not need to type here
       - SECRET_KEY=xxxxxxxxxxxxxxxxxxxxx
       - ACCESS_PASSWORD_HASH=xxxxxxxxxxxxxxxxxxxxxxxx
-    restart: always
