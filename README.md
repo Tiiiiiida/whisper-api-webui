@@ -27,7 +27,6 @@ A simple web app for transcribing audio using the OpenAI Whisper API (and compat
    python password_gen.py
    ```
 
-   - Input the desired password when prompted.
    - Copy the resulting hash and paste it into the `ACCESS_PASSWORD_HASH` field in the `docker-compose.yml` file.
 3. **Start the app:**
 
