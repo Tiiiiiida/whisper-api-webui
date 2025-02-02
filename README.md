@@ -48,3 +48,5 @@ A simple web app for transcribing audio using the OpenAI Whisper API (and compat
 - The list of available Whisper models is automatically fetched from the OpenAI API and filtered to show only models containing "whisper".
 
 ## Screenshots
+![image](https://github.com/user-attachments/assets/3f5fd707-d904-4418-a088-04b46cfe3842)
+![image](https://github.com/user-attachments/assets/5379bdb7-9c5c-473f-9455-58558bce8b79)
