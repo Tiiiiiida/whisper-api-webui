@@ -9,7 +9,7 @@ from pydub import AudioSegment
 from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.secret_key = os.environ.get("SECRET_KEY", "default_secret_key")
 openai_api_key = os.environ.get("OPENAI_API_KEY", "")
 api_base_url = os.environ.get("API_BASE_URL", "")
