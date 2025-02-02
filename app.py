@@ -3,13 +3,12 @@ import time
 import tempfile
 import requests
 from flask import Flask, render_template, request, redirect, url_for, session, flash, Response, stream_with_context
-from flask_cors import CORS
 from functools import wraps
 from pydub import AudioSegment
 from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024 * 1024  # 1GB
 app.secret_key = os.environ.get("SECRET_KEY", "default_secret_key")
 openai_api_key = os.environ.get("OPENAI_API_KEY", "")
 api_base_url = os.environ.get("API_BASE_URL", "")
