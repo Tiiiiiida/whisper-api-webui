@@ -1,4 +1,5 @@
 # Whisper API WebUI
+[中文版](README_zh.md)
 
 A simple web app for transcribing audio using the OpenAI Whisper API (and compatible services like Groq). The app automatically compresses and splits audio files to fit API size limits. It is secure, user-friendly, and ready for public deployment.
 
